@@ -1,0 +1,19 @@
+{
+  "name": "monAppliSymf",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "dev-server": "encore dev-server", 
+    "dev": "encore dev", 
+    "watch": "encore dev --watch", 
+    "build": "encore production --progress",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
