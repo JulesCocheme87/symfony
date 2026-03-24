@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Welcome!{% endblock %}</title>
+
+        {# Bootstrap CSS #}
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+        {# Favicon #}
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>●</text></svg>">
+
+        {# Stylesheets supplémentaires #}
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('app') }}
+            <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+
+            {# CSS pour le MyCheckboxType #}
+            <link rel="stylesheet" href="{{ asset('css/styleCheckbox.css') }}">
+
+            {# Bootstrap CSS fallback (facultatif) #}
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+        {% endblock %}
+
+        {# JavaScripts #}
+        {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+            {{ importmap('app') }}
+            <script src="{{ asset('js/app.js') }}"></script>
+        {% endblock %}
+    </head>
+    <body>
+        {% include 'header.html.twig' %}
+
+        <main class="container mt-4">
+            {% block body %}{% endblock %}
+        </main>
+
+        {% include 'footer.html.twig' %}
+
+        {# Bootstrap JS #}
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>

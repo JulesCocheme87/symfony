@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des distributeurs{% endblock %}
+
+{% block body %}
+<h2 class="text-center my-3">Liste des distributeurs et leurs produits</h2>
+
+<table class="table table-bordered mx-auto" style="width:80%">
+    <thead class="table-dark">
+        <tr>
+            <th>Distributeur</th>
+            <th>Produits distribués</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for distributeur in distributeurs %}
+            <tr>
+                <td>{{ distributeur.nom }}</td>
+                <td>
+                    {% if distributeur.produits is not empty %}
+                        <table class="table table-sm table-striped mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Nom du produit</th>
+                                    <th>Référence</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for produit in distributeur.produits %}
+                                    <tr>
+                                        <td>{{ produit.nom }}</td>
+                                        <td>
+                                            {% if produit.reference is not null %}
+                                                {{ produit.reference.numero }}
+                                            {% else %}
+                                                N/A
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <em>Pas de produit distribué</em>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="2" class="text-center">Aucun distributeur disponible</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
