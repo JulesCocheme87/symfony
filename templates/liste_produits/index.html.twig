@@ -2,6 +2,32 @@
 {% block title %}Liste des produits{% endblock %}
 
 {% block body %}
+    <form method="get" action="{{ path('liste_produits') }}" class="row g-2 align-items-end mb-4">
+        <div class="col-md-5">
+            <label for="categorie" class="form-label">Filtrer par categorie</label>
+            <select id="categorie" name="categorie" class="form-select">
+                <option value="0" {% if categorieSelectionneeId == 0 %}selected{% endif %}>Toutes les categories</option>
+                {% for categorie in categories %}
+                    <option value="{{ categorie.id }}" {% if categorieSelectionneeId == categorie.id %}selected{% endif %}>
+                        {{ categorie.nom }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-outline-primary">Filtrer</button>
+            {% if categorieSelectionneeId != 0 %}
+                <a href="{{ path('liste_produits') }}" class="btn btn-outline-secondary">Reinitialiser</a>
+            {% endif %}
+        </div>
+    </form>
+
+    {% if categorieSelectionnee %}
+        <div class="alert alert-secondary">
+            Filtre actif : <strong>{{ categorieSelectionnee.nom }}</strong>
+        </div>
+    {% endif %}
+
     {% if lastproduit %}
         <div class="alert alert-primary mb-4">
             Promo 20% sur : <strong>{{ lastproduit.nom }}</strong>
@@ -9,9 +35,14 @@
     {% endif %}
 
     {% if is_granted('ROLE_ADMIN') %}
-        <a href="{{ path('admin_insert') }}" class="btn btn-info mb-4">
-            + Ajouter un produit
-        </a>
+        <div class="d-flex gap-2 mb-4">
+            <a href="{{ path('admin_insert') }}" class="btn btn-info">
+                + Ajouter un produit
+            </a>
+            <a href="{{ path('admin_categories') }}" class="btn btn-secondary">
+                Gerer les categories
+            </a>
+        </div>
     {% endif %}
 
     <div class="row row-cols-1 row-cols-md-3 g-4">
@@ -30,6 +61,22 @@
                                     <strong class="text-danger">Rupture de stock</strong>
                                 {% else %}
                                     Stock : {{ produit.quantite }}
+                                {% endif %}
+                            </li>
+                            {% if produit.description %}
+                                <li class="list-group-item">
+                                    Description :<br>
+                                    <div>{{ produit.description }}</div>
+                                </li>
+                            {% endif %}
+                            <li class="list-group-item">
+                                Categories :
+                                {% if produit.categories is not empty %}
+                                    {% for categorie in produit.categories %}
+                                        <span class="badge bg-secondary">{{ categorie.nom }}</span>
+                                    {% endfor %}
+                                {% else %}
+                                    <span class="text-muted">Aucune</span>
                                 {% endif %}
                             </li>
                         </ul>

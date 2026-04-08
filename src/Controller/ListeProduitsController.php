@@ -2,10 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Categorie;
 use App\Entity\Produit;
 use App\Entity\Distributeur;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -13,16 +15,37 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class ListeProduitsController extends AbstractController
 {
     #[Route('/liste', name: 'liste_produits', methods: ['GET'])]
-    public function index(EntityManagerInterface $entityManager): Response
+    public function index(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $produits = $entityManager->getRepository(Produit::class)->findAll();
+        $categorieId = $request->query->getInt('categorie', 0);
+        $categories = $entityManager->getRepository(Categorie::class)->findBy([], ['nom' => 'ASC']);
 
-        // Gestion du cas où il n'y a aucun produit
+        $queryBuilder = $entityManager->getRepository(Produit::class)->createQueryBuilder('p');
+        $queryBuilder->leftJoin('p.categories', 'c')->addSelect('c');
+
+        $categorieSelectionnee = null;
+        if ($categorieId > 0) {
+            $queryBuilder
+                ->innerJoin('p.categories', 'fc')
+                ->andWhere('fc.id = :categorieId')
+                ->setParameter('categorieId', $categorieId);
+
+            $categorieSelectionnee = $entityManager->getRepository(Categorie::class)->find($categorieId);
+        }
+
+        $produits = $queryBuilder
+            ->orderBy('p.id', 'DESC')
+            ->getQuery()
+            ->getResult();
+
         $produitEnPromotion = $produits ? end($produits) : null;
 
         return $this->render('liste_produits/index.html.twig', [
             'listeproduits' => $produits,
             'lastproduit' => $produitEnPromotion,
+            'categories' => $categories,
+            'categorieSelectionnee' => $categorieSelectionnee,
+            'categorieSelectionneeId' => $categorieSelectionnee?->getId() ?? 0,
         ]);
     }
 

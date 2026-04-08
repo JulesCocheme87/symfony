@@ -8,6 +8,10 @@
             {% for produit in listeproduits %}
                     {{ produit.nom }}<br>
                     {{ produit.reference.numero }}<br>
+                    {% if produit.description %}
+                        Description :<br>
+                        {{ produit.description }}<br>
+                    {% endif %}
 
             {% endfor %}
     </div>

@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Distributeur;
+use App\Entity\Categorie;
 
 #[ORM\Entity(repositoryClass: ProduitRepository::class)]
 class Produit
@@ -28,6 +29,9 @@ class Produit
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $lienImage = null;
 
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $description = null;
+
     #[ORM\Column(type: 'boolean')]
     private ?bool $rupture = null;
 
@@ -37,9 +41,16 @@ class Produit
     #[ORM\ManyToMany(targetEntity: Distributeur::class, inversedBy: "produits")]
     private Collection $distributeurs;
 
+    /**
+     * @var Collection<int, Categorie>
+     */
+    #[ORM\ManyToMany(targetEntity: Categorie::class, inversedBy: 'produits')]
+    private Collection $categories;
+
     public function __construct()
     {
         $this->distributeurs = new ArrayCollection();
+        $this->categories = new ArrayCollection();
     }
 
     public function getId(): ?int { return $this->id; }
@@ -55,6 +66,9 @@ class Produit
 
     public function getLienImage(): ?string { return $this->lienImage; }
     public function setLienImage(?string $lienImage): static { $this->lienImage = $lienImage; return $this; }
+
+    public function getDescription(): ?string { return $this->description; }
+    public function setDescription(?string $description): static { $this->description = $description; return $this; }
 
     public function isRupture(): ?bool { return $this->rupture; }
     public function setRupture(bool $rupture): static { $this->rupture = $rupture; return $this; }
@@ -75,6 +89,30 @@ class Produit
     public function removeDistributeur(Distributeur $distributeur): static
     {
         $this->distributeurs->removeElement($distributeur);
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Categorie>
+     */
+    public function getCategories(): Collection
+    {
+        return $this->categories;
+    }
+
+    public function addCategorie(Categorie $categorie): static
+    {
+        if (!$this->categories->contains($categorie)) {
+            $this->categories->add($categorie);
+        }
+
+        return $this;
+    }
+
+    public function removeCategorie(Categorie $categorie): static
+    {
+        $this->categories->removeElement($categorie);
+
         return $this;
     }
 }
